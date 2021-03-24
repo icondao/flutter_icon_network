@@ -1,15 +1,12 @@
 # flutter_icon_network
 
-flutter_icon_network
+FLutter version: 1.22.3
 
-## Getting Started
+a Flutter plugin to work with native Android/Ios sdk of Icon network
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+to track: https://bicon.tracker.solidwallet.io/
+docs: https://www.icondev.io/docs/sdk-overview
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+feature: create wallet, send icx to testnet, check balance
 
+supported Android, still working on Ios
