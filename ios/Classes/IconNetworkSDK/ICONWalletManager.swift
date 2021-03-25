@@ -13,13 +13,19 @@ class ICONWalletManager {
         return wallet
     }
     
-    func getBalance(address: String) -> String {
-        let result:Result<BigUInt, ICError> = iconService.getBalance(address: address).execute()
+    func getBalance(privateKey: String) -> String {
+        let wallet = getWalletFromPrivateKey(privateKey: privateKey)
+        let result:Result<BigUInt, ICError> = iconService.getBalance(address: wallet.address).execute()
         switch result {
         case .success(let balance):
             return "\(balance)"
         case .failure( _):
             return "0"
         }
+    }
+    
+    func getWalletFromPrivateKey(privateKey: String) -> Wallet {
+        let privateKey = PrivateKey(hex: Data(hex: privateKey))
+        return Wallet(privateKey: privateKey)
     }
 }

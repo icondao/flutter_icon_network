@@ -9,8 +9,7 @@ class ICONTransactionManager {
     private init(){}
     
     func sendICX(from: String, to: String, value: String) -> String {
-        let privateKey = PrivateKey(hex: Data(hex: from))
-        let wallet = Wallet(privateKey: privateKey)
+        let wallet = ICONWalletManager.instance.getWalletFromPrivateKey(privateKey: from)
         
         let coinTransfer = Transaction()
             .from(wallet.address)
@@ -21,7 +20,7 @@ class ICONTransactionManager {
             .nonce("0x1")
         
         do {
-            let signed = try SignedTransaction(transaction: coinTransfer, privateKey: privateKey)
+            let signed = try SignedTransaction(transaction: coinTransfer, privateKey: wallet.key.privateKey)
             let request = iconService.sendTransaction(signedTransaction: signed)
             let response = request.execute()
             

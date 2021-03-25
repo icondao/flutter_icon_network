@@ -25,8 +25,8 @@ public class SwiftFlutterIconNetworkPlugin: NSObject, FlutterPlugin {
             break
         case "getBalance":
             let argumentsMap = (call.arguments as! Dictionary<String, String>)
-            let address = argumentsMap["address"]
-            let balance = ICONWalletManager.instance.getBalance(address: address!)
+            let privateKey = argumentsMap["private_key"]
+            let balance = ICONWalletManager.instance.getBalance(privateKey: privateKey!)
             result("{\"balance\":\"\(balance)\"}")
             break
         default:

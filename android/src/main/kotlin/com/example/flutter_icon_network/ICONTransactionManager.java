@@ -90,8 +90,9 @@ public class ICONTransactionManager {
      * @return BigInteger balance
      * @throws IOException
      */
-    BigInteger getICXBalance(String address) throws IOException {
-        return iconService.getBalance(address).execute();
+    BigInteger getICXBalance(String privateKey) throws IOException {
+        Wallet wallet = KeyWallet.load(new Bytes(privateKey));
+        return iconService.getBalance(wallet.getAddress()).execute();
     }
 
     //gradle myRun --args='c958108ccc79513ef9bf7647c29194199e3c5b86a88cbbc236dd5f74dfc37366  hx1f617adb52d49f65d60c48a3109fb0e7b3cd72ea 11'
