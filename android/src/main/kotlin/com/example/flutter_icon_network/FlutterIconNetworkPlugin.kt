@@ -47,8 +47,8 @@ class FlutterIconNetworkPlugin: FlutterPlugin, MethodCallHandler {
         result.success("{\"txHash\":\"${txHash}\",\"status\":0}")
       }
       "getBalance" -> {
-        val privateKey: String? = call.argument("private_key")
-        val balance: BigInteger? = ICONTransactionManager.getInstance("https://bicon.net.solidwallet.io/api/v3").getICXBalance(privateKey)
+        val address: String? = call.argument("address")
+        val balance: BigInteger? = ICONTransactionManager.getInstance("https://bicon.net.solidwallet.io/api/v3").getICXBalance(address)
         result.success("{\"balance\":\"${balance}\"}")
       }
     }

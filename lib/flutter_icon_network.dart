@@ -16,8 +16,8 @@ class FlutterIconNetwork {
   static const MethodChannel _channel =
       const MethodChannel('flutter_icon_network');
 
-  static Future<Balance> getBalance(String privateKey) async {
-    final String balance = await _channel.invokeMethod('getBalance', {'private_key': privateKey});
+  static Future<Balance> getBalance({String address}) async {
+    final String balance = await _channel.invokeMethod('getBalance', {'address': address});
     print("FlutterIconNetwork getBalance $balance");
     return balanceFromJson(balance);
   }

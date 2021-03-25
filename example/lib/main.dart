@@ -71,7 +71,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _getBalance() async {
-    final balance = await FlutterIconNetwork.getBalance(privateKeyCtrl.text);
+    final balance = await FlutterIconNetwork.getBalance(address: walletAddressCtrl.text);
     setState(() {
       currentBalance = balance.balance;
     });
