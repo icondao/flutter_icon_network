@@ -1,8 +1,8 @@
 # flutter_icon_network
 
-**environment:**
-  sdk: ">=2.7.0 <3.0.0"\
-  flutter: ">=1.20.0"
+**environment:**\
+  - sdk: ">=2.7.0 <3.0.0"\
+  - flutter: ">=1.20.0"
 
 A Flutter plugin to work with native Android/Ios sdk of Icon network
 
