@@ -9,5 +9,7 @@ docs: https://www.icondev.io/docs/sdk-overview
 
 feature: create wallet, send icx to testnet, check balance
 
-supported Android, still working on Ios
+Worked on both android and ios now
+
+
 ![demo](./demo.png)
