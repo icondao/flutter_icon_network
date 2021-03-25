@@ -1,7 +1,7 @@
 # flutter_icon_network
 
 **environment:**
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"\
   flutter: ">=1.20.0"
 
 A Flutter plugin to work with native Android/Ios sdk of Icon network
@@ -10,7 +10,9 @@ A Flutter plugin to work with native Android/Ios sdk of Icon network
 **Native SDK:** https://www.icondev.io/docs/sdk-overview\
 
 **Features:** create wallet, send icx to testnet, check balance\
+
 Supported `Android`, `Ios`\
+
 ![demo](./demo.png)
 
 # Install:
