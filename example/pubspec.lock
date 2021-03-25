@@ -79,9 +79,11 @@ packages:
   flutter_icon_network:
     dependency: "direct main"
     description:
-      path: ".."
-      relative: true
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: a43fee245b3103b1973904d7f0ac89d7925cd92c
+      url: "https://git.baikal.io/mobile/boilerplate/flutter_icon_network"
+    source: git
     version: "0.0.1"
   flutter_test:
     dependency: "direct dev"

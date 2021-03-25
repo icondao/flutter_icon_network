@@ -2,12 +2,38 @@
 
 FLutter version: 1.22.3
 
-a Flutter plugin to work with native Android/Ios sdk of Icon network
+A Flutter plugin to work with native Android/Ios sdk of Icon network
 
-to track: https://bicon.tracker.solidwallet.io/
-docs: https://www.icondev.io/docs/sdk-overview
+To track: https://bicon.tracker.solidwallet.io/ \
+Native SDK: https://www.icondev.io/docs/sdk-overview
 
-feature: create wallet, send icx to testnet, check balance
-
-supported Android, Ios
+Features: create wallet, send icx to testnet, check balance\
+Supported Android, Ios
 ![demo](./demo.png)
+
+# Install:
+```
+  flutter_icon_network:
+    git: https://git.baikal.io/mobile/boilerplate/flutter_icon_network
+```
+# Functions:
+##### getBalance:
+return current balance
+```
+final balance = await FlutterIconNetwork.getBalance(privateKey: yourPrivateKey;
+```
+##### sendIcx:
+send Icx to an `address`
+return the `transaction hash`
+```
+final txHash = await FlutterIconNetwork.sendIcx(SendIcxRequest(
+        from: yourPrivateKey,
+        to: adress,
+        value: 1))
+```
+##### createWallet:
+create a new wallet
+return the `Wallet` object that contain the `privateKey` and `address`
+```
+final wallet = await FlutterIconNetwork.createWallet;
+```
