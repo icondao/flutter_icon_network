@@ -24,6 +24,7 @@ class _MyAppState extends State<MyApp> {
   final privateKeyCtrl = TextEditingController();
   final walletAddressCtrl = TextEditingController();
   String currentBalance = "N/A";
+  String txHash="";
 
   //send icx
   final senderCtrl = TextEditingController();
@@ -67,11 +68,14 @@ class _MyAppState extends State<MyApp> {
     _showSnackBar(
         "transaction hash ${response.txHash} copied, pls go to https://bicon.tracker.solidwallet.io/ to check the transaction process");
     Clipboard.setData(new ClipboardData(text: response.txHash));
+    setState(() {
+      txHash = "transaction/${response.txHash}";
+    });
     await _getBalance();
   }
 
   Future<void> _getBalance() async {
-    final balance = await FlutterIconNetwork.getBalance(privateKey: senderCtrl.text);
+    final balance = await FlutterIconNetwork.getBalance(privateKey: privateKeyCtrl.text);
     setState(() {
       currentBalance = balance.balance;
     });
@@ -106,9 +110,9 @@ class _MyAppState extends State<MyApp> {
                   SizedBox(height: 50,),
                   InkWell(
                     onTap: () {
-                       launch("https://bicon.tracker.solidwallet.io/");
+                       launch("https://bicon.tracker.solidwallet.io/$txHash");
                     },
-                    child: Text("https://bicon.tracker.solidwallet.io/", style: TextStyle(color: Colors.blue),),
+                    child: Text("https://bicon.tracker.solidwallet.io/$txHash", style: TextStyle(color: Colors.blue),),
                   )
                 ],
               ),
@@ -176,7 +180,7 @@ class _MyAppState extends State<MyApp> {
           SizedBox(
             width: 10,
           ),
-          Expanded(child: Center(child: Text(currentBalance.isNotEmpty ? "${int.parse(currentBalance)/1000000000000000000} ICX" : "N/A"))),
+          Expanded(child: Center(child: Text(currentBalance.isNotEmpty ? "$currentBalance" : "N/A"))),
         ],
       ),
       SizedBox(
