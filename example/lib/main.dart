@@ -119,7 +119,7 @@ class _MyAppState extends State<MyApp> {
                     onTap: () {
                        launch("https://bicon.tracker.solidwallet.io/$txHash");
                     },
-                    text: "press to check transaction hash",
+                    text: "Check transaction hash",
                   ),
                   SizedBox(height: 10,),
                   AppSolidButton(
@@ -128,7 +128,7 @@ class _MyAppState extends State<MyApp> {
                     onTap: () {
                       launch("https://bicon.tracker.solidwallet.io/address/${walletAddressCtrl.text}");
                     },
-                    text: "press to check wallet address",
+                    text: "Check wallet address",
                   )
                 ],
               ),
