@@ -1,10 +1,4 @@
-//
-//  ICONWalletManager.swift
-//  BigInt
-//
 //  Created by Leo Ngo on 25/03/2021.
-//
-
 import Foundation
 import ICONKit
 import BigInt
