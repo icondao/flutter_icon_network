@@ -9,6 +9,16 @@ public class SwiftFlutterIconNetworkPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    result("iOS " + UIDevice.current.systemVersion)
+    switch call.method {
+    case "createWallet":
+        break
+    case "sendIcx":
+        break
+    case "getBalance":
+        break
+    default:
+        print("unhandled method call \(call.method)")
+    }
+//    result("iOS " + UIDevice.current.systemVersion)
   }
 }

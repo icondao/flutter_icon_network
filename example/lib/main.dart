@@ -263,7 +263,7 @@ class _MyAppState extends State<MyApp> {
 
   void _getCache() {
     setState(() {
-      currentBalance = GetStorage().read<String>(StorageKey.balance);
+      currentBalance = GetStorage().read<String>(StorageKey.balance)??"";
       privateKeyCtrl.text = GetStorage().read<String>(StorageKey.privateKey);
       walletAddressCtrl.text =
           GetStorage().read<String>(StorageKey.walletAddress);
