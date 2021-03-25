@@ -5,7 +5,7 @@ import BigInt
 
 class ICONTransactionManager {
     static let instance = ICONTransactionManager()
-    let iconService = ICONService(provider: "https://ctz.solidwallet.io/api/v3", nid: "0x3")
+    let iconService = ICONService(provider: "https://bicon.net.solidwallet.io/api/v3", nid: "0x3")
     private init(){}
     
     func sendICX(from: String, to: String, value: String) -> String {
@@ -14,7 +14,7 @@ class ICONTransactionManager {
         let coinTransfer = Transaction()
             .from(wallet.address)
             .to(to)
-            .value(BigUInt(Int(value)!))
+            .value(BigUInt(Int(value)!*1000000000000000000))
             .stepLimit(BigUInt(1000000))
             .nid(self.iconService.nid)
             .nonce("0x1")
@@ -27,7 +27,8 @@ class ICONTransactionManager {
             switch response {
             case .success(let txHash):
                 return txHash
-            case .failure( _):
+            case .failure(let error):
+                print("FAIL: \(error.errorDescription)")
                 return ""
             }
         } catch {

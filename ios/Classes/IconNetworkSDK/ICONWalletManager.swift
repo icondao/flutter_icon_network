@@ -5,7 +5,7 @@ import BigInt
 
 class ICONWalletManager {
     static let instance = ICONWalletManager()
-    let iconService = ICONService(provider: "https://ctz.solidwallet.io/api/v3", nid: "0x3")
+    let iconService = ICONService(provider: "https://bicon.net.solidwallet.io/api/v3", nid: "0x3")
     private init(){}
     
     func createWallet() -> Wallet {

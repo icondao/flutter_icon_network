@@ -57,7 +57,10 @@ class _MyAppState extends State<MyApp> {
       walletAddressCtrl.text = wallet.address;
       receiverCtrl.text = wallet.address;
     });
-    _saveCache();
+    Future.delayed(Duration(seconds: 2), () async {
+      await _getBalance();
+      _saveCache();
+    });
   }
 
   void _sendIcx() async {
@@ -66,12 +69,14 @@ class _MyAppState extends State<MyApp> {
         to: receiverCtrl.text ?? "",
         value: sendAmountCtrl.text ?? 0));
     _showSnackBar(
-        "transaction hash ${response.txHash} copied, pls go to https://bicon.tracker.solidwallet.io/ to check the transaction process");
+        "transaction hash ${response.txHash} copied, pls press check txHash button to check");
     Clipboard.setData(new ClipboardData(text: response.txHash));
     setState(() {
       txHash = "transaction/${response.txHash}";
     });
-    await _getBalance();
+    Future.delayed(Duration(seconds: 5), () async {
+      await _getBalance();
+    });
   }
 
   Future<void> _getBalance() async {
@@ -108,11 +113,22 @@ class _MyAppState extends State<MyApp> {
                   ),
                   ..._buildGetBalanceSection(),
                   SizedBox(height: 50,),
-                  InkWell(
+                  AppSolidButton(
+                    backgroundColor: Colors.red,
+                    width: 200,
                     onTap: () {
                        launch("https://bicon.tracker.solidwallet.io/$txHash");
                     },
-                    child: Text("https://bicon.tracker.solidwallet.io/$txHash", style: TextStyle(color: Colors.blue),),
+                    text: "press to check transaction hash",
+                  ),
+                  SizedBox(height: 10,),
+                  AppSolidButton(
+                    backgroundColor: Colors.red,
+                    width: 200,
+                    onTap: () {
+                      launch("https://bicon.tracker.solidwallet.io/address/${walletAddressCtrl.text}");
+                    },
+                    text: "press to check wallet address",
                   )
                 ],
               ),
