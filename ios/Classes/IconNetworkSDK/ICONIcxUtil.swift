@@ -26,4 +26,10 @@ class ICONIcxUtil {
             return "0"
         }
     }
+    
+    static func stringToHexString(value: String) -> String {
+        let bigIntValue = BigUInt(Int(value)!*1000000000000000000)
+        print("stringToHexString \(bigIntValue) to \(bigIntValue.toHexString())")
+        return bigIntValue.toHexString()
+    }
 }

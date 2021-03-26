@@ -53,6 +53,21 @@ class FlutterIconNetworkPlugin: FlutterPlugin, MethodCallHandler {
         val balance: BigInteger? = ICONTransactionManager.getInstance(host, networkId).getICXBalance(privateKey)
         result.success("{\"balance\":\"${balance}\"}")
       }
+      "sendToken" -> {
+        val from: String? = call.argument("from")
+        val to: String? = call.argument("to")
+        val value: String? = call.argument("value")
+        val scoreAddress: String? = call.argument("score_address")
+        Log.v("sendIcx: ","from $from to $to value $value")
+        val txHash = ICONTransactionManager.getInstance(host, networkId).sendToken(from, to, scoreAddress, value)
+        result.success("{\"txHash\":\"${txHash}\",\"status\":0}")
+      }
+      "getTokenBalance" -> {
+        val privateKey: String? = call.argument("private_key")
+        val scoreAddress: String? = call.argument("score_address")
+        val balance: BigInteger? = ICONTransactionManager.getInstance(host, networkId).getTokenBalance(privateKey, scoreAddress)
+        result.success("{\"balance\":\"${balance}\"}")
+      }
     }
   }
 

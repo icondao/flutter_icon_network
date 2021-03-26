@@ -35,7 +35,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    senderCtrl.text = "c958108ccc79513ef9bf7647c29194199e3c5b86a88cbbc236dd5f74dfc37366";
+    senderCtrl.text = IconConstant.samplePrivateKey;
     Future.delayed(Duration(seconds: 1), () {
       _getCache();
     });

@@ -3,6 +3,8 @@ package com.example.flutter_icon_network;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.concurrent.TimeUnit;
+
+import foundation.icon.icx.Call;
 import foundation.icon.icx.IconService;
 import foundation.icon.icx.KeyWallet;
 import foundation.icon.icx.SignedTransaction;
@@ -14,6 +16,9 @@ import foundation.icon.icx.data.Bytes;
 import foundation.icon.icx.data.IconAmount;
 import foundation.icon.icx.data.TransactionResult;
 import foundation.icon.icx.transport.http.HttpProvider;
+import foundation.icon.icx.transport.jsonrpc.RpcItem;
+import foundation.icon.icx.transport.jsonrpc.RpcObject;
+import foundation.icon.icx.transport.jsonrpc.RpcValue;
 import okhttp3.OkHttpClient;
 
 public class ICONTransactionManager {
@@ -73,12 +78,9 @@ public class ICONTransactionManager {
 
         // Create signature of the transaction
         SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
-        // Read params to transfer to nodes
-        // System.out.println(signedTransaction.getProperties());
         // Send the transaction
         Bytes txHash = iconService.sendTransaction(signedTransaction).execute();
         return txHash.toString();
-//        return iconService.getTransactionResult(txHash).execute();
     }
 
     /**
@@ -93,21 +95,48 @@ public class ICONTransactionManager {
         return iconService.getBalance(wallet.getAddress()).execute();
     }
 
-    //gradle myRun --args='c958108ccc79513ef9bf7647c29194199e3c5b86a88cbbc236dd5f74dfc37366  hx1f617adb52d49f65d60c48a3109fb0e7b3cd72ea 11'
-//    public static void main(String[] args) {
-//        if (args != null && args.length > 0) {
-//            System.out.println("Your private key: " + args[0]);
-//            System.out.println("Address to send: " + args[1]);
-//            System.out.println("ICX: " + args[2]);
-//            try {
-//                TransactionResult result = ICONTransactionManager.getInstance("https://bicon.net.solidwallet.io/api/v3").sendICX(args[0], args[2].toString(), args[1], false);
-//                System.out.println("TransactionResult " + result.getStatus());
-//            } catch (IOException e) {
-//                System.out.println(e.getLocalizedMessage());
-//                e.printStackTrace();
-//            }
-//        } else {
-//            System.out.println("Please provide the args for me with this statement: gradle myRun --args='[your private key] [address to send icx] [icx value]'");
-//        }
-//    }
+    BigInteger getTokenBalance(String privateKey, String scoreAddress) throws IOException {
+        Wallet wallet = KeyWallet.load(new Bytes(privateKey));
+        Address tokenAddress = new Address(scoreAddress);
+        String methodName = "balanceOf";
+        RpcObject params = new RpcObject.Builder()
+                .put("_owner", new RpcValue(wallet.getAddress()))
+                .build();
+
+        Call<RpcItem> call = new Call.Builder()
+                .to(tokenAddress)
+                .method(methodName)
+                .params(params)
+                .build();
+
+        RpcItem result = iconService.call(call).execute();
+        return result.asInteger();
+    }
+
+    String sendToken(String privateKey, String toAddress, String scoreAddress, String numOfToken) throws IOException {
+        Wallet wallet = KeyWallet.load(new Bytes(privateKey));
+        int tokenDecimals = 18;
+        BigInteger value = IconAmount.of(numOfToken, tokenDecimals).toLoop();
+        Address tokenAddress = new Address(scoreAddress);
+        BigInteger networkId = new BigInteger(nid);
+        long timestamp = System.currentTimeMillis() * 1000L;
+        String methodName = "transfer";
+
+        RpcObject params = new RpcObject.Builder()
+                .put("_to", new RpcValue(toAddress))
+                .put("_value", new RpcValue(value))
+                .build();
+        Transaction transaction = TransactionBuilder.newBuilder()
+                .nid(networkId)
+                .from(wallet.getAddress())
+                .to(tokenAddress)
+                .timestamp(new BigInteger(Long.toString(timestamp)))
+                .call(methodName)
+                .params(params)
+                .build();
+        BigInteger estimatedStep = iconService.estimateStep(transaction).execute();
+        SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet, estimatedStep);
+        Bytes txHash = iconService.sendTransaction(signedTransaction).execute();
+        return txHash.toString();
+    }
 }

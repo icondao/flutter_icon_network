@@ -8,6 +8,7 @@ import 'package:flutter_icon_network/models/wallet.dart';
 export 'package:flutter_icon_network/models/balance.dart';
 export 'package:flutter_icon_network/models/send_icx_response.dart';
 export 'package:flutter_icon_network/models/wallet.dart';
+export 'package:flutter_icon_network/constant.dart';
 
 class FlutterIconNetwork {
   static const MethodChannel _channel =
@@ -48,20 +49,21 @@ class FlutterIconNetwork {
     return sendIcxResponseFromJson(response);
   }
 
-  Future<Balance> getTokenBalance({String yourAddress, String scoreAddress}) async {
+  Future<Balance> getTokenBalance({String privateKey, String scoreAddress}) async {
     final String balance = await _channel.invokeMethod('getTokenBalance',
-        {'your_address': yourAddress, 'score_address': scoreAddress, "host": host, "network_id": _networkId});
+        {'private_key': privateKey, 'score_address': scoreAddress, "host": host, "network_id": _networkId});
     print("FlutterIconNetwork getTokenBalance $balance");
     return balanceFromJson(balance);
   }
 
-  //hexValue is hex, ex: '0x1234'
+  //value is num of icx, ex: 1
   Future<SendIcxResponse> sendToken(
-      {String yourPrivateKey, String scoreAddress, String hexValue}) async {
+      {String yourPrivateKey, String toAddress, String scoreAddress, String value}) async {
     final String response = await _channel.invokeMethod('sendIcx', {
       "from": yourPrivateKey,
-      "to": scoreAddress,
-      "value": hexValue,
+      "to": toAddress,
+      "score_address": scoreAddress,
+      "value": value,
       "host": host,
       "network_id": _networkId
     });

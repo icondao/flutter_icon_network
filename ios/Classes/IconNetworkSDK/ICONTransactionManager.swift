@@ -45,17 +45,17 @@ class ICONTransactionManager {
         }
     }
     
-    func sendToken(from: String, to: String, value: String) -> String {
+    func sendToken(from: String, to: String, value: String, scoreAddress: String) -> String {
         let wallet = ICONWalletManager.getInstance(host: iconService.provider, networkId: iconService.nid).getWalletFromPrivateKey(privateKey: from)
         
         let call = CallTransaction()
             .from(wallet.address)
-            .to(to)
+            .to(scoreAddress)
             .stepLimit(BigUInt(1000000))
             .nid(self.iconService.nid)
             .nonce("0x1")
             .method("transfer")
-            .params(["_to": to, "_value": value])
+            .params(["_to": to, "_value": ICONIcxUtil.stringToHexString(value: value)])
         
         do {
             let signed = try SignedTransaction(transaction: call, privateKey: wallet.key.privateKey)
@@ -86,6 +86,8 @@ class ICONTransactionManager {
             return nil
         }
     }
+    
+    
     
     func getTransaction(txHash: String) -> Response.TransactionByHashResult? {
         let request: Request<Response.TransactionByHashResult> = iconService.getTransaction(hash: txHash)
