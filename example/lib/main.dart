@@ -99,38 +99,40 @@ class _MyAppState extends State<MyApp> {
             this.scaffoldContext = scaffoldContext;
             return Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  ..._buildWalletSection(),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                  ),
-                  ..._buildSendIcxSection(),
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                  ),
-                  ..._buildGetBalanceSection(),
-                  SizedBox(height: 50,),
-                  AppSolidButton(
-                    backgroundColor: Colors.red,
-                    width: 200,
-                    onTap: () {
-                       launch("https://bicon.tracker.solidwallet.io/$txHash");
-                    },
-                    text: "Check transaction hash",
-                  ),
-                  SizedBox(height: 10,),
-                  AppSolidButton(
-                    backgroundColor: Colors.red,
-                    width: 200,
-                    onTap: () {
-                      launch("https://bicon.tracker.solidwallet.io/address/${walletAddressCtrl.text}");
-                    },
-                    text: "Check wallet address",
-                  )
-                ],
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ..._buildWalletSection(),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                    ),
+                    ..._buildSendIcxSection(),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                    ),
+                    ..._buildGetBalanceSection(),
+                    SizedBox(height: 50,),
+                    AppSolidButton(
+                      backgroundColor: Colors.red,
+                      width: 200,
+                      onTap: () {
+                         launch("https://bicon.tracker.solidwallet.io/$txHash");
+                      },
+                      text: "Check transaction hash",
+                    ),
+                    SizedBox(height: 10,),
+                    AppSolidButton(
+                      backgroundColor: Colors.red,
+                      width: 200,
+                      onTap: () {
+                        launch("https://bicon.tracker.solidwallet.io/address/${walletAddressCtrl.text}");
+                      },
+                      text: "Check wallet address",
+                    )
+                  ],
+                ),
               ),
             );
           },
