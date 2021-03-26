@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:flutter_icon_network/models/balance.dart';
 import 'package:flutter_icon_network/models/send_icx_response.dart';
+import 'package:flutter_icon_network/models/transaction_result.dart';
 import 'package:flutter_icon_network/models/wallet.dart';
 export 'package:flutter_icon_network/models/balance.dart';
 export 'package:flutter_icon_network/models/send_icx_response.dart';
@@ -56,10 +57,20 @@ class FlutterIconNetwork {
     return balanceFromJson(balance);
   }
 
+  Future<TransactionResult> deployScore({String privateKey, String initIcxSupply}) async {
+    if(Platform.isIOS) {
+      return null;
+    }
+    final String result = await _channel.invokeMethod('deployScore',
+        {'private_key': privateKey, 'init_icx_supply': initIcxSupply, "host": host, "network_id": _networkId});
+    print("FlutterIconNetwork deployScore $result");
+    return transactionResultFromJson(result);
+  }
+
   //value is num of icx, ex: 1
   Future<SendIcxResponse> sendToken(
       {String yourPrivateKey, String toAddress, String scoreAddress, String value}) async {
-    final String response = await _channel.invokeMethod('sendIcx', {
+    final String response = await _channel.invokeMethod('sendToken', {
       "from": yourPrivateKey,
       "to": toAddress,
       "score_address": scoreAddress,
