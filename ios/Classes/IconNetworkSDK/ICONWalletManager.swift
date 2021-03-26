@@ -4,9 +4,18 @@ import ICONKit
 import BigInt
 
 class ICONWalletManager {
-    static let instance = ICONWalletManager()
-    let iconService = ICONService(provider: "https://bicon.net.solidwallet.io/api/v3", nid: "0x3")
-    private init(){}
+    static func getInstance(host: String, networkId: String) -> ICONWalletManager {
+        if(instance == nil) {
+            instance = ICONWalletManager(host: host, networkId: networkId)
+        }
+        return instance!
+    }
+    static var instance: ICONWalletManager?
+    let iconService: ICONService
+
+    private init(host: String, networkId: String){
+        iconService = ICONService(provider: host, nid: networkId)
+    }
     
     func createWallet() -> Wallet {
         let wallet = Wallet(privateKey: nil)

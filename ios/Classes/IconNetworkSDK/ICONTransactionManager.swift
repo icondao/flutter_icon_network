@@ -4,12 +4,21 @@ import ICONKit
 import BigInt
 
 class ICONTransactionManager {
-    static let instance = ICONTransactionManager()
-    let iconService = ICONService(provider: "https://bicon.net.solidwallet.io/api/v3", nid: "0x3")
-    private init(){}
+    static func getInstance(host: String, networkId: String) -> ICONTransactionManager {
+        if(instance == nil) {
+            instance = ICONTransactionManager(host: host, networkId: networkId)
+        }
+        return instance!
+    }
+    static var instance: ICONTransactionManager?
+    let iconService: ICONService
+
+    private init(host: String, networkId: String){
+        iconService = ICONService(provider: host, nid: networkId)
+    }
     
     func sendICX(from: String, to: String, value: String) -> String {
-        let wallet = ICONWalletManager.instance.getWalletFromPrivateKey(privateKey: from)
+        let wallet = ICONWalletManager.getInstance(host: iconService.provider, networkId: iconService.nid).getWalletFromPrivateKey(privateKey: from)
         
         let coinTransfer = Transaction()
             .from(wallet.address)

@@ -18,11 +18,14 @@ import okhttp3.OkHttpClient;
 
 public class ICONTransactionManager {
 
-    private IconService iconService;
+    private final IconService iconService;
 
-    private static ICONTransactionManager instance = null;
+    private final String nid;
 
-    private ICONTransactionManager(String domain) {
+    private static final ICONTransactionManager instance = null;
+
+    private ICONTransactionManager(String domain, String networkId) {
+        nid = networkId;
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .readTimeout(2000, TimeUnit.MILLISECONDS)
                 .writeTimeout(6000, TimeUnit.MILLISECONDS)
@@ -30,9 +33,9 @@ public class ICONTransactionManager {
         iconService = new IconService(new HttpProvider(okHttpClient, domain));
     }
 
-    public static ICONTransactionManager getInstance(String withDomain) {
+    public static ICONTransactionManager getInstance(String host, String networkId) {
         if (instance == null) {
-            return new ICONTransactionManager(withDomain);
+            return new ICONTransactionManager(host, networkId);
         }
         return instance;
     }
@@ -43,21 +46,16 @@ public class ICONTransactionManager {
      * @param privateKey use to load the KeyWallet
      * @param value      How much ICX you want to send
      * @param toAddress  The address you want to send
-     * @param isMainNet  Network ID ("1" for Mainnet, "2" for Testnet, etc)
      * @return TransactionResult
      * @throws IOException
      */
-    String sendICX(String privateKey, String value, String toAddress, Boolean isMainNet) throws IOException {
+    String sendICX(String privateKey, String value, String toAddress) throws IOException {
         Wallet wallet = KeyWallet.load(new Bytes(privateKey));
         Address addressToSend = new Address(toAddress);
         // 1 ICX -> 1000000000000000000 loop conversion
         BigInteger valueToSend = IconAmount.of(value, IconAmount.Unit.ICX).toLoop();
         // Network ID ("1" for Mainnet, "2" for Testnet, etc)
-        String network = "3";
-        if (isMainNet) {
-            network = "1";
-        }
-        BigInteger networkId = new BigInteger(network);
+        BigInteger networkId = new BigInteger(nid);
         // Only `default` step cost is required to transfer ICX: it is `100000` as of now.
         BigInteger stepLimit = new BigInteger("100000");
         // Timestamp is used to prevent the identical transactions. Only current time is required (Standard unit: us)

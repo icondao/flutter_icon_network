@@ -10,23 +10,24 @@ public class SwiftFlutterIconNetworkPlugin: NSObject, FlutterPlugin {
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let argumentsMap = (call.arguments as! Dictionary<String, String>)
+        let host = argumentsMap["host"]!
+        let networkId = argumentsMap["network_id"]!
         switch call.method {
         case "createWallet":
-            let wallet = ICONWalletManager.instance.createWallet()
+            let wallet = ICONWalletManager.getInstance(host: host, networkId: networkId).createWallet()
             result("{\"private_key\":\"\(wallet.key.privateKey.hexEncoded)\",\"address\":\"\(wallet.address)\"}")
             break
         case "sendIcx":
-            let argumentsMap = (call.arguments as! Dictionary<String, String>)
             let from = argumentsMap["from"]
             let to = argumentsMap["to"]
             let value = argumentsMap["value"]
-            let txHash = ICONTransactionManager.instance.sendICX(from: from!, to: to!, value: value!)
+            let txHash = ICONTransactionManager.getInstance(host: host, networkId: networkId).sendICX(from: from!, to: to!, value: value!)
             result("{\"txHash\":\"\(txHash)\",\"status\":0}")
             break
         case "getBalance":
-            let argumentsMap = (call.arguments as! Dictionary<String, String>)
             let privateKey = argumentsMap["private_key"]
-            let balance = ICONWalletManager.instance.getBalance(privateKey: privateKey!)
+            let balance = ICONWalletManager.getInstance(host: host, networkId: networkId).getBalance(privateKey: privateKey!)
             result("{\"balance\":\"\(balance)\"}")
             break
         default:

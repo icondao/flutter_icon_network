@@ -33,6 +33,8 @@ class FlutterIconNetworkPlugin: FlutterPlugin, MethodCallHandler {
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+    val networkId: String? = call.argument("network_id")
+    val host: String? = call.argument("host")
     when(call.method) {
       "createWallet" -> {
         val wallet: Map<String, String> = ICONWalletManager.getInstance().createWallet()
@@ -43,12 +45,12 @@ class FlutterIconNetworkPlugin: FlutterPlugin, MethodCallHandler {
         val to: String? = call.argument("to")
         val value: String? = call.argument("value")
         Log.v("sendIcx: ","from $from to $to value $value")
-        val txHash = ICONTransactionManager.getInstance("https://bicon.net.solidwallet.io/api/v3").sendICX(from, value, to, false)
+        val txHash = ICONTransactionManager.getInstance(host, networkId).sendICX(from, value, to)
         result.success("{\"txHash\":\"${txHash}\",\"status\":0}")
       }
       "getBalance" -> {
         val privateKey: String? = call.argument("private_key")
-        val balance: BigInteger? = ICONTransactionManager.getInstance("https://bicon.net.solidwallet.io/api/v3").getICXBalance(privateKey)
+        val balance: BigInteger? = ICONTransactionManager.getInstance(host, networkId).getICXBalance(privateKey)
         result.success("{\"balance\":\"${balance}\"}")
       }
     }

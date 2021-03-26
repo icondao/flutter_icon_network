@@ -20,24 +20,30 @@ Supported `Android`, `Ios`
   flutter_icon_network:
     git: https://git.baikal.io/mobile/boilerplate/flutter_icon_network
 ```
+
+# Init:
+```
+FlutterIconNetwork.instance.init(host: "https://bicon.net.solidwallet.io/api/v3", isTestNet: true);
+```
 # Functions:
 ##### getBalance:
 return current balance
 ```
-final balance = await FlutterIconNetwork.getBalance(privateKey: yourPrivateKey;
+final balance = await FlutterIconNetwork.instance.getBalance(privateKey: yourPrivateKey;
 ```
 ##### sendIcx:
 send Icx to an `address`
 return the `transaction hash`
 ```
-final txHash = await FlutterIconNetwork.sendIcx(SendIcxRequest(
-        from: yourPrivateKey,
-        to: adress,
-        value: 1))
+final txHash = await FlutterIconNetwork.instance.sendIcx(
+                        from: yourPrivateKey,
+                        to: adress,
+                        value: 1
+                     )
 ```
 ##### createWallet:
 create a new wallet
 return the `Wallet` object that contain the `privateKey` and `address`
 ```
-final wallet = await FlutterIconNetwork.createWallet;
+final wallet = await FlutterIconNetwork.instance.createWallet;
 ```

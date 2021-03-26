@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 void main() async {
   await GetStorage.init();
+  FlutterIconNetwork.instance.init(host: "https://bicon.net.solidwallet.io/api/v3", isTestNet: true);
   runApp(MyApp());
 }
 
@@ -51,7 +52,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _createWallet() async {
-    final wallet = await FlutterIconNetwork.createWallet;
+    final wallet = await FlutterIconNetwork.instance.createWallet;
     setState(() {
       privateKeyCtrl.text = wallet.privateKey;
       walletAddressCtrl.text = wallet.address;
@@ -64,10 +65,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _sendIcx() async {
-    final response = await FlutterIconNetwork.sendIcx(SendIcxRequest(
-        from: senderCtrl.text ?? "",
+    final response = await FlutterIconNetwork.instance.sendIcx(from: senderCtrl.text ?? "",
         to: receiverCtrl.text ?? "",
-        value: sendAmountCtrl.text ?? 0));
+        value: sendAmountCtrl.text ?? 0);
     _showSnackBar(
         "transaction hash ${response.txHash} copied, pls press check txHash button to check");
     Clipboard.setData(new ClipboardData(text: response.txHash));
@@ -80,7 +80,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _getBalance() async {
-    final balance = await FlutterIconNetwork.getBalance(privateKey: privateKeyCtrl.text);
+    final balance = await FlutterIconNetwork.instance.getBalance(privateKey: privateKeyCtrl.text);
     setState(() {
       currentBalance = balance.balance;
     });
