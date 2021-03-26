@@ -21,21 +21,25 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   BuildContext scaffoldContext;
-
   final privateKeyCtrl = TextEditingController();
   final walletAddressCtrl = TextEditingController();
   double currentBalance;
   String txHash="";
 
   //send icx
-  final senderCtrl = TextEditingController();
-  final receiverCtrl = TextEditingController();
-  final sendAmountCtrl = TextEditingController();
+  final icxSenderCtrl = TextEditingController();
+  final icxReceiverCtrl = TextEditingController();
+  final icxSendAmountCtrl = TextEditingController();
+  
+  //score
+  final scoreAddressCtrl = TextEditingController();
+  final tokenReceiverAddressCtrl = TextEditingController();
+  final tokenSendAmountCtrl = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    senderCtrl.text = IconConstant.samplePrivateKey;
+    icxSenderCtrl.text = IconConstant.samplePrivateKey;
     Future.delayed(Duration(seconds: 1), () {
       _getCache();
     });
@@ -45,9 +49,12 @@ class _MyAppState extends State<MyApp> {
   void dispose() {
     privateKeyCtrl.dispose();
     walletAddressCtrl.dispose();
-    senderCtrl.dispose();
-    receiverCtrl.dispose();
-    sendAmountCtrl.dispose();
+    icxSenderCtrl.dispose();
+    icxReceiverCtrl.dispose();
+    icxSendAmountCtrl.dispose();
+    scoreAddressCtrl.dispose();
+    tokenReceiverAddressCtrl.dispose();
+    tokenSendAmountCtrl.dispose();
     super.dispose();
   }
 
@@ -56,18 +63,14 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       privateKeyCtrl.text = wallet.privateKey;
       walletAddressCtrl.text = wallet.address;
-      receiverCtrl.text = wallet.address;
-    });
-    Future.delayed(Duration(seconds: 2), () async {
-      await _getBalance();
-      _saveCache();
+      icxReceiverCtrl.text = wallet.address;
     });
   }
 
   void _sendIcx() async {
-    final response = await FlutterIconNetwork.instance.sendIcx(yourPrivateKey: senderCtrl.text ?? "",
-        destinationAddress: receiverCtrl.text ?? "",
-        value: sendAmountCtrl.text ?? 0);
+    final response = await FlutterIconNetwork.instance.sendIcx(yourPrivateKey: icxSenderCtrl.text ?? "",
+        destinationAddress: icxReceiverCtrl.text ?? "",
+        value: icxSendAmountCtrl.text ?? 0);
     _showSnackBar(
         "transaction hash ${response.txHash} copied, pls press check txHash button to check");
     Clipboard.setData(new ClipboardData(text: response.txHash));
@@ -75,16 +78,26 @@ class _MyAppState extends State<MyApp> {
       txHash = "transaction/${response.txHash}";
     });
     Future.delayed(Duration(seconds: 5), () async {
-      await _getBalance();
+      _getBalance();
     });
   }
 
-  Future<void> _getBalance() async {
+  void _getBalance() async {
     final balance = await FlutterIconNetwork.instance.getIcxBalance(privateKey: privateKeyCtrl.text);
     setState(() {
       currentBalance = balance.icxBalance;
     });
     _saveCache();
+  }
+  
+  void _deployScore() async {
+    final transactionResult = await FlutterIconNetwork.instance.deployScore(privateKey: privateKeyCtrl.text, initIcxSupply: "3");
+    setState(() {
+      scoreAddressCtrl.text = transactionResult.scoreAddress;
+      txHash = "transaction/${transactionResult.txHash}";
+    });
+    _showSnackBar(
+        "deployed, scoreAddress ${transactionResult.scoreAddress} copied, pls press check txHash button to check");
   }
 
   @override
@@ -110,7 +123,17 @@ class _MyAppState extends State<MyApp> {
                     ),
                     ..._buildSendIcxSection(),
                     Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Divider(),
+                    ),
+                    ..._buildScoreSection(),
+                    Padding(
                       padding: const EdgeInsets.all(16),
+                    ),
+                    ..._buildSendTokenSection(),
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Divider(),
                     ),
                     ..._buildGetBalanceSection(),
                     SizedBox(height: 50,),
@@ -140,11 +163,7 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
-
-  void _showSnackBar(String text) {
-    Scaffold.of(scaffoldContext).showSnackBar(SnackBar(content: Text(text)));
-  }
-
+  //icx
   List<Widget> _buildWalletSection() {
     return [
       Row(
@@ -189,36 +208,6 @@ class _MyAppState extends State<MyApp> {
     ];
   }
 
-  List<Widget> _buildGetBalanceSection() {
-    return [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AppSolidButton(onTap: _getBalance, text: "Get balance"),
-          SizedBox(
-            width: 10,
-          ),
-          Expanded(child: Center(child: Text(currentBalance != null ? "$currentBalance" : "N/A"))),
-        ],
-      ),
-      SizedBox(
-        height: 10,
-      ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: 100,
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          Expanded(child: Center(child: _buildHint("current balance"))),
-        ],
-      )
-    ];
-  }
-
   List<Widget> _buildSendIcxSection() {
     return [
       Row(
@@ -230,21 +219,21 @@ class _MyAppState extends State<MyApp> {
           ),
           Expanded(
               child: TextField(
-            controller: senderCtrl,
+            controller: icxSenderCtrl,
           )),
           SizedBox(
             width: 10,
           ),
           Expanded(
               child: TextField(
-            controller: receiverCtrl,
+            controller: icxReceiverCtrl,
           )),
           SizedBox(
             width: 10,
           ),
           Expanded(
               child: TextField(
-            controller: sendAmountCtrl,
+            controller: icxSendAmountCtrl,
           ))
         ],
       ),
@@ -274,13 +263,121 @@ class _MyAppState extends State<MyApp> {
     ];
   }
 
+  List<Widget> _buildGetBalanceSection() {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AppSolidButton(onTap: _getBalance, text: "Get balance"),
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(child: Center(child: Text(currentBalance != null ? "$currentBalance ICX" : "N/A"))),
+        ],
+      ),
+      SizedBox(
+        height: 10,
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 100,
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(child: Center(child: _buildHint("current balance"))),
+        ],
+      )
+    ];
+  }
+
+  //score
+  List<Widget> _buildScoreSection() {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AppSolidButton(onTap: _deployScore, text: "Create SCORE"),
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(
+              child: TextField(
+                controller: scoreAddressCtrl,
+              )),
+        ],
+      ),
+      SizedBox(
+        height: 10,
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 100,
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(child: Center(child: _buildHint("SCORE Address"))),
+        ],
+      )
+    ];
+  }
+
+  List<Widget> _buildSendTokenSection() {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AppSolidButton(onTap: _sendIcx, text: "Send Token"),
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(
+              child: TextField(
+                controller: tokenReceiverAddressCtrl,
+              )),
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(
+              child: TextField(
+                controller: tokenSendAmountCtrl,
+              ))
+        ],
+      ),
+      SizedBox(
+        height: 10,
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 100,
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(child: Center(child: _buildHint("Token Receiver Address"))),
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(child: Center(child: _buildHint("amount of token"))),
+        ],
+      )
+    ];
+  }
+
   void _saveCache() {
     GetStorage().write(StorageKey.balance, currentBalance);
     GetStorage().write(StorageKey.privateKey, privateKeyCtrl.text);
     GetStorage().write(StorageKey.walletAddress, walletAddressCtrl.text);
-    GetStorage().write(StorageKey.sender, senderCtrl.text);
-    GetStorage().write(StorageKey.receiver, receiverCtrl.text);
-    GetStorage().write(StorageKey.sendAmount, sendAmountCtrl.text);
+    GetStorage().write(StorageKey.sender, icxSenderCtrl.text);
+    GetStorage().write(StorageKey.receiver, icxReceiverCtrl.text);
+    GetStorage().write(StorageKey.sendAmount, icxSendAmountCtrl.text);
   }
 
   void _getCache() {
@@ -289,10 +386,14 @@ class _MyAppState extends State<MyApp> {
       privateKeyCtrl.text = GetStorage().read<String>(StorageKey.privateKey);
       walletAddressCtrl.text =
           GetStorage().read<String>(StorageKey.walletAddress);
-      senderCtrl.text = GetStorage().read<String>(StorageKey.sender);
-      receiverCtrl.text = GetStorage().read<String>(StorageKey.receiver);
-      sendAmountCtrl.text = GetStorage().read<String>(StorageKey.sendAmount);
+      icxSenderCtrl.text = GetStorage().read<String>(StorageKey.sender);
+      icxReceiverCtrl.text = GetStorage().read<String>(StorageKey.receiver);
+      icxSendAmountCtrl.text = GetStorage().read<String>(StorageKey.sendAmount);
     });
+  }
+
+  void _showSnackBar(String text) {
+    Scaffold.of(scaffoldContext).showSnackBar(SnackBar(content: Text(text)));
   }
 
   Text _buildHint(String text) {
