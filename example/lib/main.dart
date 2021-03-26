@@ -65,8 +65,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _sendIcx() async {
-    final response = await FlutterIconNetwork.instance.sendIcx(from: senderCtrl.text ?? "",
-        to: receiverCtrl.text ?? "",
+    final response = await FlutterIconNetwork.instance.sendIcx(yourPrivateKey: senderCtrl.text ?? "",
+        destinationAddress: receiverCtrl.text ?? "",
         value: sendAmountCtrl.text ?? 0);
     _showSnackBar(
         "transaction hash ${response.txHash} copied, pls press check txHash button to check");
@@ -80,7 +80,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _getBalance() async {
-    final balance = await FlutterIconNetwork.instance.getBalance(privateKey: privateKeyCtrl.text);
+    final balance = await FlutterIconNetwork.instance.getIcxBalance(privateKey: privateKeyCtrl.text);
     setState(() {
       currentBalance = balance.balance;
     });

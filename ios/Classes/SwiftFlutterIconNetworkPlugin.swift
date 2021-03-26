@@ -25,9 +25,22 @@ public class SwiftFlutterIconNetworkPlugin: NSObject, FlutterPlugin {
             let txHash = ICONTransactionManager.getInstance(host: host, networkId: networkId).sendICX(from: from!, to: to!, value: value!)
             result("{\"txHash\":\"\(txHash)\",\"status\":0}")
             break
-        case "getBalance":
+        case "getIcxBalance":
             let privateKey = argumentsMap["private_key"]
-            let balance = ICONWalletManager.getInstance(host: host, networkId: networkId).getBalance(privateKey: privateKey!)
+            let balance = ICONWalletManager.getInstance(host: host, networkId: networkId).getIcxBalance(privateKey: privateKey!)
+            result("{\"balance\":\"\(balance)\"}")
+            break
+        case "sendToken":
+            let from = argumentsMap["from"]
+            let to = argumentsMap["to"]
+            let value = argumentsMap["value"]
+            let txHash = ICONTransactionManager.getInstance(host: host, networkId: networkId).sendToken(from: from!, to: to!, value: value!)
+            result("{\"txHash\":\"\(txHash)\",\"status\":0}")
+            break
+        case "getTokenBalance":
+            let yourAddress = argumentsMap["your_address"]
+            let scroreAddress = argumentsMap["scrore_address"]
+            let balance = ICONWalletManager.getInstance(host: host, networkId: networkId).getTokenBalance(yourAddress: yourAddress!, scoreAddress: scroreAddress!)
             result("{\"balance\":\"\(balance)\"}")
             break
         default:

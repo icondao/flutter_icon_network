@@ -20,13 +20,6 @@ class FlutterIconNetwork {
     this.host = host;
   }
 
-  Future<Balance> getBalance({String privateKey}) async {
-    final String balance = await _channel.invokeMethod('getBalance',
-        {'private_key': privateKey, "host": host, "network_id": _networkId});
-    print("FlutterIconNetwork getBalance $balance");
-    return balanceFromJson(balance);
-  }
-
   Future<Wallet> get createWallet async {
     final String wallet = await _channel
         .invokeMethod('createWallet', {"host": host, "network_id": _networkId});
@@ -34,16 +27,45 @@ class FlutterIconNetwork {
     return walletFromJson(wallet);
   }
 
+  Future<Balance> getIcxBalance({String privateKey}) async {
+    final String balance = await _channel.invokeMethod('getIcxBalance',
+        {'private_key': privateKey, "host": host, "network_id": _networkId});
+    print("FlutterIconNetwork getIcxBalance $balance");
+    return balanceFromJson(balance);
+  }
+
+  //value is decimal, ex: '1'
   Future<SendIcxResponse> sendIcx(
-      {String from, String to, String value}) async {
+      {String yourPrivateKey, String destinationAddress, String value}) async {
     final String response = await _channel.invokeMethod('sendIcx', {
-      "from": from,
-      "to": to,
+      "from": yourPrivateKey,
+      "to": destinationAddress,
       "value": value,
       "host": host,
       "network_id": _networkId
     });
     print("FlutterIconNetwork sendIcx $response");
+    return sendIcxResponseFromJson(response);
+  }
+
+  Future<Balance> getTokenBalance({String yourAddress, String scoreAddress}) async {
+    final String balance = await _channel.invokeMethod('getTokenBalance',
+        {'your_address': yourAddress, 'score_address': scoreAddress, "host": host, "network_id": _networkId});
+    print("FlutterIconNetwork getTokenBalance $balance");
+    return balanceFromJson(balance);
+  }
+
+  //hexValue is hex, ex: '0x1234'
+  Future<SendIcxResponse> sendToken(
+      {String yourPrivateKey, String scoreAddress, String hexValue}) async {
+    final String response = await _channel.invokeMethod('sendIcx', {
+      "from": yourPrivateKey,
+      "to": scoreAddress,
+      "value": hexValue,
+      "host": host,
+      "network_id": _networkId
+    });
+    print("FlutterIconNetwork sendToken $response");
     return sendIcxResponseFromJson(response);
   }
 

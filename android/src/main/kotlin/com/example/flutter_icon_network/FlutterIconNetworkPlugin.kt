@@ -48,7 +48,7 @@ class FlutterIconNetworkPlugin: FlutterPlugin, MethodCallHandler {
         val txHash = ICONTransactionManager.getInstance(host, networkId).sendICX(from, value, to)
         result.success("{\"txHash\":\"${txHash}\",\"status\":0}")
       }
-      "getBalance" -> {
+      "getIcxBalance" -> {
         val privateKey: String? = call.argument("private_key")
         val balance: BigInteger? = ICONTransactionManager.getInstance(host, networkId).getICXBalance(privateKey)
         result.success("{\"balance\":\"${balance}\"}")

@@ -12,7 +12,7 @@ class ICONTransactionManager {
     }
     static var instance: ICONTransactionManager?
     let iconService: ICONService
-
+    
     private init(host: String, networkId: String){
         iconService = ICONService(provider: host, nid: networkId)
     }
@@ -37,11 +37,66 @@ class ICONTransactionManager {
             case .success(let txHash):
                 return txHash
             case .failure(let error):
-                print("FAIL: \(error.errorDescription)")
+                print("FAIL: \(String(describing: error.errorDescription))")
                 return ""
             }
         } catch {
             return ""
+        }
+    }
+    
+    func sendToken(from: String, to: String, value: String) -> String {
+        let wallet = ICONWalletManager.getInstance(host: iconService.provider, networkId: iconService.nid).getWalletFromPrivateKey(privateKey: from)
+        
+        let call = CallTransaction()
+            .from(wallet.address)
+            .to(to)
+            .stepLimit(BigUInt(1000000))
+            .nid(self.iconService.nid)
+            .nonce("0x1")
+            .method("transfer")
+            .params(["_to": to, "_value": value])
+        
+        do {
+            let signed = try SignedTransaction(transaction: call, privateKey: wallet.key.privateKey)
+            let request = iconService.sendTransaction(signedTransaction: signed)
+            let response = request.execute()
+            
+            switch response {
+            case .success(let txHash):
+                return txHash
+            case .failure(let error):
+                print("FAIL: \(String(describing: error.errorDescription))")
+                return ""
+            }
+        } catch {
+            return ""
+        }
+    }
+    
+    func getTransactionResult(txHash: String) -> Response.TransactionResult? {
+        let request: Request<Response.TransactionResult> = iconService.getTransactionResult(hash: txHash)
+        let response = request.execute()
+        
+        switch response {
+        case .success(let transactionResult):
+            return transactionResult
+        case .failure(let error):
+            print("FAIL: \(String(describing: error.errorDescription))")
+            return nil
+        }
+    }
+    
+    func getTransaction(txHash: String) -> Response.TransactionByHashResult? {
+        let request: Request<Response.TransactionByHashResult> = iconService.getTransaction(hash: txHash)
+        let response = request.execute()
+        
+        switch response {
+        case .success(let transaction):
+            return transaction
+        case .failure(let error):
+            print("FAIL: \(String(describing: error.errorDescription))")
+            return nil
         }
     }
     

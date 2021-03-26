@@ -22,9 +22,21 @@ class ICONWalletManager {
         return wallet
     }
     
-    func getBalance(privateKey: String) -> String {
+    func getIcxBalance(privateKey: String) -> String {
         let wallet = getWalletFromPrivateKey(privateKey: privateKey)
         let result:Result<BigUInt, ICError> = iconService.getBalance(address: wallet.address).execute()
+        switch result {
+        case .success(let balance):
+            return "\(balance)"
+        case .failure( _):
+            return "0"
+        }
+    }
+    
+    func getTokenBalance(yourAddress: String, scoreAddress: String) -> String {
+        let call = Call<BigUInt>(from: yourAddress, to: scoreAddress, method: "balanceOf", params: [:])
+        let request: Request<BigUInt> = iconService.call(call)
+        let result: Result<BigUInt, ICError> = request.execute()
         switch result {
         case .success(let balance):
             return "\(balance)"

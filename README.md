@@ -29,7 +29,7 @@ FlutterIconNetwork.instance.init(host: "https://bicon.net.solidwallet.io/api/v3"
 ##### getBalance:
 return current balance
 ```
-final balance = await FlutterIconNetwork.instance.getBalance(privateKey: yourPrivateKey;
+final balance = await FlutterIconNetwork.instance.getIcxBalance(privateKey: yourPrivateKey;
 ```
 ##### sendIcx:
 send Icx to an `address`
