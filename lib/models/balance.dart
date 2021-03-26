@@ -11,6 +11,10 @@ class Balance {
 
   final String balance;
 
+  double get icxBalance {
+    return BigInt.tryParse(balance)/BigInt.from(1000000000000000000);
+  }
+
   Balance copyWith({
     String balance,
   }) =>

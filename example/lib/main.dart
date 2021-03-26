@@ -24,7 +24,7 @@ class _MyAppState extends State<MyApp> {
 
   final privateKeyCtrl = TextEditingController();
   final walletAddressCtrl = TextEditingController();
-  String currentBalance = "N/A";
+  double currentBalance;
   String txHash="";
 
   //send icx
@@ -82,7 +82,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> _getBalance() async {
     final balance = await FlutterIconNetwork.instance.getIcxBalance(privateKey: privateKeyCtrl.text);
     setState(() {
-      currentBalance = balance.balance;
+      currentBalance = balance.icxBalance;
     });
     _saveCache();
   }
@@ -198,7 +198,7 @@ class _MyAppState extends State<MyApp> {
           SizedBox(
             width: 10,
           ),
-          Expanded(child: Center(child: Text(currentBalance.isNotEmpty ? "$currentBalance" : "N/A"))),
+          Expanded(child: Center(child: Text(currentBalance != null ? "$currentBalance" : "N/A"))),
         ],
       ),
       SizedBox(
@@ -285,7 +285,7 @@ class _MyAppState extends State<MyApp> {
 
   void _getCache() {
     setState(() {
-      currentBalance = GetStorage().read<String>(StorageKey.balance)??"";
+      currentBalance = GetStorage().read<double>(StorageKey.balance);
       privateKeyCtrl.text = GetStorage().read<String>(StorageKey.privateKey);
       walletAddressCtrl.text =
           GetStorage().read<String>(StorageKey.walletAddress);
