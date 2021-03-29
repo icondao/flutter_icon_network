@@ -50,6 +50,7 @@ final wallet = await FlutterIconNetwork.instance.createWallet;
 # SmartContract Functions:
 ##### deployContract: only available in android, on ios the sdk not support yet
 to deploy a SCORE by choose the zip file contain the source code
+the sample token zip file contain in source code, pls download it to your phone
 ```
 final transactionResult = await FlutterIconNetwork.instance.deployScore(
                             privateKey: privateKey, initIcxSupply: "10");
@@ -62,7 +63,9 @@ to send token to a address throught SCORE
 final response = await FlutterIconNetwork.instance.sendToken(
         yourPrivateKey: privateKey,
         toAddress: receiverAddress,
-        value: numOfToken);
+        value: numOfToken,
+        scoreAddress: scoreAddress
+       );
 ```
 will return the txHash
 
@@ -90,4 +93,12 @@ privateKey: bf589ba6e0b907dbc88b1e174444e79f39df24f8e5d0ba6bf0e104f95a2ff2a6
 
 address: hx116e14d86771b97d50aec933685e85ad7c1d5f30
 
+##### Intergration test:
+cd example
+run 
+```
+ flutter drive \
+  --driver=test_driver/integration_test.dart \
+  --target=integration_test/feature_test.dart
+```
 
