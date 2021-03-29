@@ -112,31 +112,24 @@ public class ICONSCOREManager {
                 .put("_initialSupply", new RpcValue(initialSupply))
                 .put("_decimals", new RpcValue(decimals))
                 .build();
-        BigInteger stepLimit = new BigInteger("1000000000");
+        BigInteger stepLimit = new BigInteger("2000000000");
 
         // make a raw transaction without the stepLimit
         Transaction transaction = TransactionBuilder.newBuilder()
                 .nid(networkId)
                 .from(fromAddress)
-                .to(toAddress)
+                .to(toAddress).stepLimit(stepLimit)
                 .timestamp(new BigInteger(Long.toString(timestamp)))
                 .nonce(nonce)
                 .deploy(contentType, content)
                 .params(params)
                 .build();
-        BigInteger estimatedStep = BigInteger.valueOf(100000000);
-        // get an estimated step value
-        try {
-            estimatedStep = iconService.estimateStep(transaction).execute();
-        } catch (Exception e) {
-            System.out.println("RpcError: code: " + e + ", message: " + e.getMessage());
-        }
 
         // set some margin value for the operation of `on_install`
         BigInteger margin = BigInteger.valueOf(10000);
 
         // make a signed transaction with the same raw transaction and the estimated step
-        SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet, estimatedStep.add(margin));
+        SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
         Bytes hash = iconService.sendTransaction(signedTransaction).execute();
         System.out.println("txHash: " + hash);
         return getTransactionResult(hash);

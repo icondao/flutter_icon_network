@@ -116,7 +116,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _deployScore() async {
-    final transactionResult = await FlutterIconNetwork.instance.deployScore(privateKey: privateKeyCtrl.text, initIcxSupply: "1");
+    final transactionResult = await FlutterIconNetwork.instance.deployScore(privateKey: privateKeyCtrl.text, initIcxSupply: "10");
     setState(() {
       scoreAddressCtrl.text = transactionResult.scoreAddress;
       txHash = "transaction/${transactionResult.txHash}";
