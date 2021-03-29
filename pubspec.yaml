@@ -11,6 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  file_picker:
 
 dev_dependencies:
   flutter_test:

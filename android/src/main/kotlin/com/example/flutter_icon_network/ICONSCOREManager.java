@@ -77,7 +77,7 @@ public class ICONSCOREManager {
         BigInteger networkId = new BigInteger(nid);
         long timestamp = System.currentTimeMillis() * 1000L;
         String methodName = "transfer";
-
+        BigInteger stepLimit = new BigInteger("2000000000");
         RpcObject params = new RpcObject.Builder()
                 .put("_to", new RpcValue(toAddress))
                 .put("_value", new RpcValue(value))
@@ -85,21 +85,20 @@ public class ICONSCOREManager {
         Transaction transaction = TransactionBuilder.newBuilder()
                 .nid(networkId)
                 .from(wallet.getAddress())
-                .to(tokenAddress)
+                .to(tokenAddress).stepLimit(stepLimit)
                 .timestamp(new BigInteger(Long.toString(timestamp)))
                 .call(methodName)
                 .params(params)
                 .build();
-        BigInteger estimatedStep = iconService.estimateStep(transaction).execute();
-        SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet, estimatedStep);
+//        BigInteger estimatedStep = iconService.estimateStep(transaction).execute();
+        SignedTransaction signedTransaction = new SignedTransaction(transaction, wallet);
         Bytes txHash = iconService.sendTransaction(signedTransaction).execute();
         return txHash.toString();
     }
 
-    TransactionResult deployScore(String privateKey, String initIcxSupply) throws IOException {
+    TransactionResult deployScore(String privateKey, String initIcxSupply, byte[] content) throws IOException {
         Wallet wallet = KeyWallet.load(new Bytes(privateKey));
         String contentType = "application/zip";
-        byte[] content = readFile();
         BigInteger networkId = new BigInteger(nid);
         Address fromAddress = wallet.getAddress();
         Address toAddress = new Address("cx0000000000000000000000000000000000000000");
@@ -113,6 +112,7 @@ public class ICONSCOREManager {
                 .put("_initialSupply", new RpcValue(initialSupply))
                 .put("_decimals", new RpcValue(decimals))
                 .build();
+        BigInteger stepLimit = new BigInteger("1000000000");
 
         // make a raw transaction without the stepLimit
         Transaction transaction = TransactionBuilder.newBuilder()
@@ -124,9 +124,13 @@ public class ICONSCOREManager {
                 .deploy(contentType, content)
                 .params(params)
                 .build();
-
+        BigInteger estimatedStep = BigInteger.valueOf(100000000);
         // get an estimated step value
-        BigInteger estimatedStep = iconService.estimateStep(transaction).execute();
+        try {
+            estimatedStep = iconService.estimateStep(transaction).execute();
+        } catch (Exception e) {
+            System.out.println("RpcError: code: " + e + ", message: " + e.getMessage());
+        }
 
         // set some margin value for the operation of `on_install`
         BigInteger margin = BigInteger.valueOf(10000);
@@ -136,21 +140,6 @@ public class ICONSCOREManager {
         Bytes hash = iconService.sendTransaction(signedTransaction).execute();
         System.out.println("txHash: " + hash);
         return getTransactionResult(hash);
-    }
-
-    private byte[] readFile() throws IOException {
-        File file = new File(getClass().getClassLoader().getResource("sampleToken.zip").getFile());
-        return readBytes(file);
-    }
-
-    private byte[] readBytes(File file) throws IOException {
-        long length = file.length();
-        if (length > Integer.MAX_VALUE) throw new OutOfMemoryError("File is too big!!");
-        byte[] result = new byte[(int) length];
-        DataInputStream inputStream;
-        inputStream = new DataInputStream(new FileInputStream(file));
-        inputStream.readFully(result);
-        return result;
     }
 
     TransactionResult getTransactionResult(Bytes txHash) throws IOException {

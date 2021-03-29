@@ -23,7 +23,8 @@ class _MyAppState extends State<MyApp> {
   BuildContext scaffoldContext;
   final privateKeyCtrl = TextEditingController();
   final walletAddressCtrl = TextEditingController();
-  double currentBalance;
+  double currentIcxBalance;
+  double currentTokenBalance;
   String txHash="";
 
   //send icx
@@ -65,6 +66,7 @@ class _MyAppState extends State<MyApp> {
       walletAddressCtrl.text = wallet.address;
       icxReceiverCtrl.text = wallet.address;
     });
+    _saveCache();
   }
 
   void _sendIcx() async {
@@ -78,20 +80,43 @@ class _MyAppState extends State<MyApp> {
       txHash = "transaction/${response.txHash}";
     });
     Future.delayed(Duration(seconds: 5), () async {
-      _getBalance();
+      _getIcxBalance();
     });
   }
 
-  void _getBalance() async {
+  void _getIcxBalance() async {
     final balance = await FlutterIconNetwork.instance.getIcxBalance(privateKey: privateKeyCtrl.text);
     setState(() {
-      currentBalance = balance.icxBalance;
+      currentIcxBalance = balance.icxBalance;
     });
     _saveCache();
   }
-  
+
+  void _sendToken() async {
+    final response = await FlutterIconNetwork.instance.sendToken(yourPrivateKey: privateKeyCtrl.text ?? "",
+        toAddress: tokenReceiverAddressCtrl.text ?? "",
+        value: tokenSendAmountCtrl.text, scoreAddress: scoreAddressCtrl.text);
+    _showSnackBar(
+        "transaction hash ${response.txHash} copied, pls press check txHash button to check");
+    Clipboard.setData(new ClipboardData(text: response.txHash));
+    setState(() {
+      txHash = "transaction/${response.txHash}";
+    });
+    Future.delayed(Duration(seconds: 5), () async {
+      _getTokenBalance();
+    });
+  }
+
+  void _getTokenBalance() async {
+    final balance = await FlutterIconNetwork.instance.getTokenBalance(privateKey: privateKeyCtrl.text, scoreAddress: scoreAddressCtrl.text);
+    setState(() {
+      currentTokenBalance = balance.icxBalance;
+    });
+    _saveCache();
+  }
+
   void _deployScore() async {
-    final transactionResult = await FlutterIconNetwork.instance.deployScore(privateKey: privateKeyCtrl.text, initIcxSupply: "3");
+    final transactionResult = await FlutterIconNetwork.instance.deployScore(privateKey: privateKeyCtrl.text, initIcxSupply: "1");
     setState(() {
       scoreAddressCtrl.text = transactionResult.scoreAddress;
       txHash = "transaction/${transactionResult.txHash}";
@@ -123,6 +148,10 @@ class _MyAppState extends State<MyApp> {
                     ),
                     ..._buildSendIcxSection(),
                     Padding(
+                      padding: const EdgeInsets.all(16),
+                    ),
+                    ..._buildGetIcxBalanceSection(),
+                    Padding(
                       padding: const EdgeInsets.all(20),
                       child: Divider(),
                     ),
@@ -132,10 +161,9 @@ class _MyAppState extends State<MyApp> {
                     ),
                     ..._buildSendTokenSection(),
                     Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Divider(),
+                      padding: const EdgeInsets.all(16),
                     ),
-                    ..._buildGetBalanceSection(),
+                    ..._buildGetTokenBalanceSection(),
                     SizedBox(height: 50,),
                     AppSolidButton(
                       backgroundColor: Colors.red,
@@ -263,16 +291,46 @@ class _MyAppState extends State<MyApp> {
     ];
   }
 
-  List<Widget> _buildGetBalanceSection() {
+  List<Widget> _buildGetIcxBalanceSection() {
     return [
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          AppSolidButton(onTap: _getBalance, text: "Get balance"),
+          AppSolidButton(onTap: _getIcxBalance, text: "Get Icx balance"),
           SizedBox(
             width: 10,
           ),
-          Expanded(child: Center(child: Text(currentBalance != null ? "$currentBalance ICX" : "N/A"))),
+          Expanded(child: Center(child: Text(currentIcxBalance != null ? "$currentIcxBalance ICX" : "N/A"))),
+        ],
+      ),
+      SizedBox(
+        height: 10,
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 100,
+          ),
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(child: Center(child: _buildHint("current balance"))),
+        ],
+      )
+    ];
+  }
+
+  List<Widget> _buildGetTokenBalanceSection() {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AppSolidButton(onTap: _getTokenBalance, text: "Get Token balance"),
+          SizedBox(
+            width: 10,
+          ),
+          Expanded(child: Center(child: Text(currentTokenBalance != null ? "$currentTokenBalance Token" : "N/A"))),
         ],
       ),
       SizedBox(
@@ -332,7 +390,7 @@ class _MyAppState extends State<MyApp> {
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          AppSolidButton(onTap: _sendIcx, text: "Send Token"),
+          AppSolidButton(onTap: _sendToken, text: "Send Token"),
           SizedBox(
             width: 10,
           ),
@@ -372,23 +430,35 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _saveCache() {
-    GetStorage().write(StorageKey.balance, currentBalance);
+    GetStorage().write(StorageKey.icxBalance, currentIcxBalance);
     GetStorage().write(StorageKey.privateKey, privateKeyCtrl.text);
     GetStorage().write(StorageKey.walletAddress, walletAddressCtrl.text);
-    GetStorage().write(StorageKey.sender, icxSenderCtrl.text);
-    GetStorage().write(StorageKey.receiver, icxReceiverCtrl.text);
-    GetStorage().write(StorageKey.sendAmount, icxSendAmountCtrl.text);
+    GetStorage().write(StorageKey.icxSender, icxSenderCtrl.text);
+    GetStorage().write(StorageKey.icxReceiver, icxReceiverCtrl.text);
+    GetStorage().write(StorageKey.icxSendAmount, icxSendAmountCtrl.text);
+
+    //score
+    GetStorage().write(StorageKey.tokenBalance, currentTokenBalance);
+    GetStorage().write(StorageKey.scoreAddress, scoreAddressCtrl.text);
+    GetStorage().write(StorageKey.tokenReceiver, tokenReceiverAddressCtrl.text);
+    GetStorage().write(StorageKey.tokenSendAmount, tokenSendAmountCtrl.text);
   }
 
   void _getCache() {
     setState(() {
-      currentBalance = GetStorage().read<double>(StorageKey.balance);
+      currentIcxBalance = GetStorage().read<double>(StorageKey.icxBalance);
       privateKeyCtrl.text = GetStorage().read<String>(StorageKey.privateKey);
       walletAddressCtrl.text =
           GetStorage().read<String>(StorageKey.walletAddress);
-      icxSenderCtrl.text = GetStorage().read<String>(StorageKey.sender);
-      icxReceiverCtrl.text = GetStorage().read<String>(StorageKey.receiver);
-      icxSendAmountCtrl.text = GetStorage().read<String>(StorageKey.sendAmount);
+      icxSenderCtrl.text = GetStorage().read<String>(StorageKey.icxSender);
+      icxReceiverCtrl.text = GetStorage().read<String>(StorageKey.icxReceiver);
+      icxSendAmountCtrl.text = GetStorage().read<String>(StorageKey.icxSendAmount);
+
+      //score
+      currentTokenBalance = GetStorage().read(StorageKey.tokenBalance);
+      scoreAddressCtrl.text = GetStorage().read(StorageKey.scoreAddress);
+      tokenReceiverAddressCtrl.text = GetStorage().read(StorageKey.tokenReceiver);
+      tokenSendAmountCtrl.text = GetStorage().read(StorageKey.tokenSendAmount);
     });
   }
 

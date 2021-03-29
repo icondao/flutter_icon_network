@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_icon_network/models/balance.dart';
 import 'package:flutter_icon_network/models/send_icx_response.dart';
@@ -61,10 +63,22 @@ class FlutterIconNetwork {
     if(Platform.isIOS) {
       return null;
     }
+    Uint8List fileBytes = await readFile();
+
     final String result = await _channel.invokeMethod('deployScore',
-        {'private_key': privateKey, 'init_icx_supply': initIcxSupply, "host": host, "network_id": _networkId});
+        {'private_key': privateKey, 'init_icx_supply': initIcxSupply, "host": host, "network_id": _networkId, 'content': fileBytes});
     print("FlutterIconNetwork deployScore $result");
     return transactionResultFromJson(result);
+  }
+
+  Future<Uint8List> readFile() async {
+    FilePickerResult result = await FilePicker.platform.pickFiles();
+    if(result != null) {
+      File file = File(result.files.single.path);
+      return await file.readAsBytes();
+    } else {
+      return null;
+    }
   }
 
   //value is num of icx, ex: 1

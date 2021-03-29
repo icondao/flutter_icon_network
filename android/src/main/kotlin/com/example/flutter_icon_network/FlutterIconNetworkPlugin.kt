@@ -11,6 +11,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import java.math.BigInteger
+import foundation.icon.icx.data.Bytes
 
 
 class FlutterIconNetworkPlugin : FlutterPlugin, MethodCallHandler {
@@ -67,8 +68,8 @@ class FlutterIconNetworkPlugin : FlutterPlugin, MethodCallHandler {
             "deployScore" -> {
                 val privateKey: String? = call.argument("private_key")
                 val initIcxSupply: String? = call.argument("init_icx_supply")
-                val tResult: TransactionResult = ICONSCOREManager.getInstance(host, networkId).deployScore(privateKey, initIcxSupply)
-                result.success("{\"score_address\":\"${tResult.scoreAddress}\", \"status\":\"${tResult.status}\",\"tx_hash\":\"${tResult.txHash}\", \"step_used\",\"${tResult.stepUsed}\"}")
+                val tResult: TransactionResult = ICONSCOREManager.getInstance(host, networkId).deployScore(privateKey, initIcxSupply, call.argument("content"))
+                result.success("{\"score_address\":\"${tResult.scoreAddress}\", \"status\":\"${tResult.status}\",\"tx_hash\":\"${tResult.txHash}\", \"step_used\":\"${tResult.stepUsed}\"}")
             }
         }
     }
