@@ -35,7 +35,7 @@ class ICONWalletManager {
     
     func getTokenBalance(privateKey: String, scoreAddress: String) -> String {
         let wallet = getWalletFromPrivateKey(privateKey: privateKey)
-        let call = Call<BigUInt>(from: wallet.address, to: scoreAddress, method: "balanceOf", params: [:])
+        let call = Call<BigUInt>(from: wallet.address, to: scoreAddress, method: "balanceOf", params: ["_owner":wallet.address])
         let request: Request<BigUInt> = iconService.call(call)
         let result: Result<BigUInt, ICError> = request.execute()
         switch result {

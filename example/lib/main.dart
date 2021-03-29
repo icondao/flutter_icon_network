@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -357,7 +359,7 @@ class _MyAppState extends State<MyApp> {
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          AppSolidButton(onTap: _deployScore, text: "Create SCORE"),
+          AppSolidButton(onTap: _deployScore, text: "Create SCORE", isEnable: Platform.isAndroid,),
           SizedBox(
             width: 10,
           ),

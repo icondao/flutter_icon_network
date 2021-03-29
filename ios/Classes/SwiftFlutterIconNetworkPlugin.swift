@@ -40,7 +40,7 @@ public class SwiftFlutterIconNetworkPlugin: NSObject, FlutterPlugin {
             break
         case "getTokenBalance":
             let privateKey = argumentsMap["private_key"]
-            let scroreAddress = argumentsMap["scrore_address"]
+            let scroreAddress = argumentsMap["score_address"]
             let balance = ICONWalletManager.getInstance(host: host, networkId: networkId).getTokenBalance(privateKey: privateKey!, scoreAddress: scroreAddress!)
             result("{\"balance\":\"\(balance)\"}")
             break

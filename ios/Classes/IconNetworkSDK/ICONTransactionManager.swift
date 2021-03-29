@@ -74,6 +74,7 @@ class ICONTransactionManager {
         }
     }
     
+    
     func getTransactionResult(txHash: String) -> Response.TransactionResult? {
         let request: Request<Response.TransactionResult> = iconService.getTransactionResult(hash: txHash)
         let response = request.execute()
