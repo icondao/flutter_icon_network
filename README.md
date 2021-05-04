@@ -58,7 +58,7 @@ final transactionResult = await FlutterIconNetwork.instance.deployScore(
 the result will container txHash, SCORE address
 
 ##### send token:
-to send token to a address throught SCORE
+to send token to a address through SCORE
 ```
 final response = await FlutterIconNetwork.instance.sendToken(
         yourPrivateKey: privateKey,

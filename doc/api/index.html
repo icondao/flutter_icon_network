@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="generator" content="made with love by dartdoc 0.39.0">
+  <meta name="description" content="flutter_icon_network API docs, for the Dart programming language.">
+  <title>flutter_icon_network - Dart API docs</title>
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="static-assets/github.css">
+  <link rel="stylesheet" href="static-assets/styles.css">
+  <link rel="icon" href="static-assets/favicon.png">
+
+</head>
+
+<body data-base-href=""
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li class="self-crumb">flutter_icon_network package</li>
+  </ol>
+  <div class="self-name">flutter_icon_network</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+      <form class="search-sidebar" role="search">
+        <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+      </form>
+    </header>
+    
+    <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+      <li class="self-crumb">flutter_icon_network package</li>
+    </ol>
+    
+    <h5 class="hidden-xs"><span class="package-name">flutter_icon_network</span> <span class="package-kind">package</span></h5>
+    <ol>
+          <li class="section-title">Libraries</li>
+          <li><a href="models_balance/models_balance-library.html">balance</a></li>
+          <li><a href="constant/constant-library.html">constant</a></li>
+          <li><a href="flutter_icon_network/flutter_icon_network-library.html">flutter_icon_network</a></li>
+          <li><a href="models_send_icx_response/models_send_icx_response-library.html">send_icx_response</a></li>
+          <li><a href="models_transaction_result/models_transaction_result-library.html">transaction_result</a></li>
+          <li><a href="models_wallet/models_wallet-library.html">wallet</a></li>
+    </ol>
+  </div>
+
+  <div id="dartdoc-main-content" class="main-content">
+      <section class="desc markdown">
+        <h1 id="flutter_icon_network">flutter_icon_network</h1>
+<p><strong>environment:</strong></p>
+<ul>
+<li>sdk: "&gt;=2.7.0 &lt;3.0.0"</li>
+<li>flutter: "&gt;=1.20.0"</li>
+</ul>
+<p>A Flutter plugin to work with native Android/Ios sdk of Icon network</p>
+<p><strong>To track:</strong> <a href="https://bicon.tracker.solidwallet.io/">https://bicon.tracker.solidwallet.io/</a> <br>
+<strong>Native SDK:</strong> <a href="https://www.icondev.io/docs/sdk-overview">https://www.icondev.io/docs/sdk-overview</a></p>
+<p><strong>Features:</strong> create wallet, send icx to testnet, check balance, deploy smart contract, send token, check token balance</p>
+<p>Supported <code>Android</code>, <code>Ios</code></p>
+<p><img src="./demo.png" alt="demo"></p>
+<h1 id="install">Install:</h1>
+<pre class="language-dart"><code>  flutter_icon_network:
+    git: https://git.baikal.io/mobile/boilerplate/flutter_icon_network
+</code></pre>
+<h1 id="init">Init:</h1>
+<pre class="language-dart"><code>FlutterIconNetwork.instance.init(host: "https://bicon.net.solidwallet.io/api/v3", isTestNet: true);
+</code></pre>
+<h1 id="wallet-functions">Wallet Functions:</h1>
+<h5 id="getbalance">getBalance:</h5>
+<p>return current balance</p>
+<pre class="language-dart"><code>final balance = await FlutterIconNetwork.instance.getIcxBalance(privateKey: yourPrivateKey);
+</code></pre>
+<h5 id="sendicx">sendIcx:</h5>
+<p>send Icx to an <code>address</code>
+return the <code>transaction hash</code></p>
+<pre class="language-dart"><code>final txHash = await FlutterIconNetwork.instance.sendIcx(
+                        yourPrivateKey: yourPrivateKey,
+                        destinationAddress: address,
+                        value: 1
+                     )
+</code></pre>
+<h5 id="createwallet">createWallet:</h5>
+<p>create a new wallet
+return the <code>Wallet</code> object that contain the <code>privateKey</code> and <code>address</code></p>
+<pre class="language-dart"><code>final wallet = await FlutterIconNetwork.instance.createWallet;
+</code></pre>
+<h1 id="smartcontract-functions">SmartContract Functions:</h1>
+<h5 id="deploycontract-only-available-in-android-on-ios-the-sdk-not-support-yet">deployContract: only available in android, on ios the sdk not support yet</h5>
+<p>to deploy a SCORE by choose the zip file contain the source code
+the sample token zip file contain in source code, pls download it to your phone</p>
+<pre class="language-dart"><code>final transactionResult = await FlutterIconNetwork.instance.deployScore(
+                            privateKey: privateKey, initIcxSupply: "10");
+</code></pre>
+<p>the result will container txHash, SCORE address</p>
+<h5 id="send-token">send token:</h5>
+<p>to send token to a address through SCORE</p>
+<pre class="language-dart"><code>final response = await FlutterIconNetwork.instance.sendToken(
+        yourPrivateKey: privateKey,
+        toAddress: receiverAddress,
+        value: numOfToken,
+        scoreAddress: scoreAddress
+       );
+</code></pre>
+<p>will return the txHash</p>
+<h5 id="check-token-balance">check token balance:</h5>
+<p>to check the token balance in SCORE</p>
+<pre class="language-dart"><code>final balance = await FlutterIconNetwork.instance.getTokenBalance(
+                                    privateKey: privateKey, 
+                                    scoreAddress: scoreAddress);
+</code></pre>
+<p>will return current SCORE token balance</p>
+<h5 id="test-accounts">Test accounts:</h5>
+<p><strong>account 1:</strong></p>
+<p>privateKey: 592eb276d534e2c41a2d9356c0ab262dc233d87e4dd71ce705ec130a8d27ff0c</p>
+<p>address: hxe7af5fcfd8dfc67530a01a0e403882687528dfcb</p>
+<p>scoreAddress: cx9e7f89f7f7fa8bd5d56e67282328a3ca87a082b1</p>
+<p><strong>account 2:</strong></p>
+<p>privateKey: bf589ba6e0b907dbc88b1e174444e79f39df24f8e5d0ba6bf0e104f95a2ff2a6</p>
+<p>address: hx116e14d86771b97d50aec933685e85ad7c1d5f30</p>
+<h5 id="intergration-test">Intergration test:</h5>
+<p>cd example
+run</p>
+<pre class="language-dart"><code> flutter drive \
+  --driver=test_driver/integration_test.dart \
+  --target=integration_test/feature_test.dart
+</code></pre>
+      </section>
+      
+      <section class="summary">
+          <h2>Libraries</h2>
+        <dl>
+          <dt id="balance">
+            <span class="name"><a href="models_balance/models_balance-library.html">balance</a></span>           
+          </dt>
+          <dd>
+             
+          </dd>
+          <dt id="constant">
+            <span class="name"><a href="constant/constant-library.html">constant</a></span>           
+          </dt>
+          <dd>
+             
+          </dd>
+          <dt id="flutter_icon_network">
+            <span class="name"><a href="flutter_icon_network/flutter_icon_network-library.html">flutter_icon_network</a></span>           
+          </dt>
+          <dd>
+             
+          </dd>
+          <dt id="send_icx_response">
+            <span class="name"><a href="models_send_icx_response/models_send_icx_response-library.html">send_icx_response</a></span>           
+          </dt>
+          <dd>
+             
+          </dd>
+          <dt id="transaction_result">
+            <span class="name"><a href="models_transaction_result/models_transaction_result-library.html">transaction_result</a></span>           
+          </dt>
+          <dd>
+             
+          </dd>
+          <dt id="wallet">
+            <span class="name"><a href="models_wallet/models_wallet-library.html">wallet</a></span>           
+          </dt>
+          <dd>
+             
+          </dd>
+        </dl>
+      </section>
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div>
+
+</main>
+
+<footer>
+  <span class="no-break">
+    flutter_icon_network
+      0.0.1
+  </span>
+
+</footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="static-assets/typeahead.bundle.min.js"></script>
+<script src="static-assets/highlight.pack.js"></script>
+<script src="static-assets/script.js"></script>
+
+
+</body>
+
+</html>
